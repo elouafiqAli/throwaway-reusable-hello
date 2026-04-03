@@ -1,0 +1,32 @@
+name: Reusable Hello World
+
+on:
+  workflow_call:
+    inputs:
+      greeting:
+        description: 'The greeting message'
+        required: false
+        type: string
+        default: 'Hello from the reusable workflow!'
+    outputs:
+      result:
+        description: 'The result of the greeting'
+        value: ${{ jobs.greet.outputs.message }}
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    outputs:
+      message: ${{ steps.greet-step.outputs.message }}
+    steps:
+      - name: Print greeting
+        id: greet-step
+        run: |
+          echo "${{ inputs.greeting }}"
+          echo "message=${{ inputs.greeting }}" >> $GITHUB_OUTPUT
+
+      - name: Show environment
+        run: |
+          echo "Runner OS: $RUNNER_OS"
+          echo "Job status: ${{ job.status }}"
+          echo "Workflow: ${{ github.workflow }}"
